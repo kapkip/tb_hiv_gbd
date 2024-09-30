@@ -620,7 +620,7 @@ tb_hiv_plotly
 
 # About
 
-This visualizations on this site were made using WHO and IMHE data from [Gapminder](www.gapminder.org/data/) and the [Global Burden of Disease Study](https://vizhub.healthdata.org/gbd-results/) collaborative network.<br>
+The visualizations on this site were made using WHO and IMHE data from [Gapminder](www.gapminder.org/data/) and the [Global Burden of Disease Study](https://vizhub.healthdata.org/gbd-results/) collaborative network.<br>
 
 Gapminder Foundation is a non-profit venture registered in Stockholm, Sweden, that promotes sustainable global development and achievement of the United Nations Millennium Development Goals by increased use and understanding of statistics and other information about social, economic, and environmental development at local, national, and global levels.<br>
 
