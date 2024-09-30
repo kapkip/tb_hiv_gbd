@@ -225,7 +225,7 @@ prev_tree_map
 
 #### TB Aggregate Incidence
 
-```{r title = "Total TB Cases by Country and Region (2000-2020)"}
+```{r title = "Total TB Cases by Region and Country (2000-2020)"}
 
 inc_sum <- tb_hiv %>%
   group_by(region, country) %>%
@@ -334,7 +334,7 @@ treatment_plotly
 
 Understanding the global burden of tuberculosis (TB) is a complex challenge. Accurately measuring the number of people infected with TB is difficult, as estimates from the World Health Organization (WHO) can vary significantly due to challenges in detection, the presence of latent TB, and other factors. It should be noted that the prevalence estimates taken from the Global Burden of Disease Project may be significantly higher than actual values. For example, in the tree map the prevalence estimate for the United States is 42.5 million, whereas the CDC estimates prevalence to be closer to 18 million. The estimates should therefore be used as a rough guide as to distribution of disease burden. A more reliable measure of the global burden may be the aggregate of newly detected cases, as these cases are often more indicative of the current epidemic. By analyzing data from 2000 to 2020, we can gain insights into regions of the world that experience a disproportionate burden of TB.<br>
 
-<b>TB Detection and Treatment</b><br>
+<b>TB Detection and Treatment</b><br><br>
 Both the most recent (2020) data and longitudinal data are presented for the estimated percentage of TB cases detected and treated. It is important to note that the significant decline in detection rates across all regions in 2020 was likely influenced by the COVID-19 pandemic. This observation underscores the fact that the fight against TB is closely linked to the strength and capacity of healthcare infrastructure, which can be significantly affected by regional and global events.
 
 
