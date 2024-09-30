@@ -413,7 +413,7 @@ death_rate_map3
 
 <b>Understanding Deaths</b><br>
 
-The choropleth maps and bar charts on this page offer two different ways to examine the mortality burden of TB, HIV, and TB-HIV co-infection: by showing mortality rates by country and deaths as a percentage of the global total for each country. These metrics provide a more nuanced view of the disease burden. For instance, while India accounts for a high percentage of global deaths across all causes, its mortality rate is comparatively lower than that of countries like South Africa.<br><br>
+The choropleth maps and bar charts on this page offer two different ways to examine the mortality burden of TB, HIV, and TB-HIV coinfection: by showing mortality rates by country and deaths as a percentage of the global total for each country. These metrics provide a more nuanced view of the disease burden. For instance, while India accounts for a high percentage of global deaths across all causes, its mortality rate is comparatively lower than that of countries like South Africa.<br><br>
 
 <b>Regional Mortality-to-Incidence Ratios</b><br>
 
