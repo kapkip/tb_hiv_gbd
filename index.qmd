@@ -602,7 +602,7 @@ tb_hiv_mir <- ggplot(tb_hiv_reg, aes(x = year, y = tb_hiv_deaths/tb_hiv_incidenc
 # plotly
 tb_hiv_plotly <- ggplotly(tb_hiv_mir, tooltip = "text") %>% 
   layout(
-    title = list(text = "Mortality to Incidence Ratio of TB-HIV Coinfection",
+    title = list(text = "Mortality-to-Incidence Ratio of TB-HIV Coinfection",
  font = list(size = 16),
   margin = list(t = 50, l = 0, r = 0, b = 0),
       xanchor = "left"),
