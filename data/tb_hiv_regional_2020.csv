@@ -1,0 +1,161 @@
+measure,location,cause,metric,year,val
+Deaths,Global,Tuberculosis,Number,2020,1177979.4663522616
+Deaths,Global,Tuberculosis,Percent,2020,0.01866078088102365
+Deaths,Global,HIV/AIDS,Number,2020,754751.8778788262
+Deaths,Global,HIV/AIDS,Percent,2020,0.01196132434110793
+Deaths,Europe & Central Asia,Tuberculosis,Number,2020,18247.435948377588
+Deaths,Europe & Central Asia,Tuberculosis,Percent,2020,0.00175154815764631
+Deaths,Europe & Central Asia,HIV/AIDS,Number,2020,33358.52763240031
+Deaths,Europe & Central Asia,HIV/AIDS,Percent,2020,0.00320233986844574
+Deaths,Sub-Saharan Africa,HIV/AIDS,Number,2020,544720.3228549606
+Deaths,Sub-Saharan Africa,HIV/AIDS,Percent,2020,0.061064549257117
+Deaths,East Asia & Pacific,Tuberculosis,Number,2020,230651.7806879379
+Deaths,East Asia & Pacific,Tuberculosis,Percent,2020,0.01254736774778798
+Deaths,East Asia & Pacific,HIV/AIDS,Number,2020,70926.63164741582
+Deaths,East Asia & Pacific,HIV/AIDS,Percent,2020,0.00386297715950533
+Deaths,Middle East & North Africa,Tuberculosis,Number,2020,10482.10983480298
+Deaths,Middle East & North Africa,Tuberculosis,Percent,2020,0.00398433623891146
+Deaths,Middle East & North Africa,HIV/AIDS,Number,2020,4408.436261805569
+Deaths,Middle East & North Africa,HIV/AIDS,Percent,2020,0.00167926245835868
+Deaths,Latin America & Caribbean,Tuberculosis,Number,2020,20017.95078592148
+Deaths,Latin America & Caribbean,Tuberculosis,Percent,2020,0.00402063583806602
+Deaths,North America,Tuberculosis,Number,2020,891.1304196871348
+Deaths,North America,Tuberculosis,Percent,2020,2.4273957022482e-4
+Deaths,North America,HIV/AIDS,Number,2020,6590.1166789206445
+Deaths,North America,HIV/AIDS,Percent,2020,0.00179511835719242
+Deaths,Latin America & Caribbean,HIV/AIDS,Number,2020,41628.15197164345
+Deaths,Latin America & Caribbean,HIV/AIDS,Percent,2020,0.00836487721719341
+Deaths,South Asia,Tuberculosis,Number,2020,518451.07377595495
+Deaths,South Asia,Tuberculosis,Percent,2020,0.03703416629234643
+Deaths,South Asia,HIV/AIDS,Number,2020,52529.49889798139
+Deaths,South Asia,HIV/AIDS,Percent,2020,0.00375490523026917
+Deaths,Sub-Saharan Africa,Tuberculosis,Number,2020,378549.0071178263
+Deaths,Sub-Saharan Africa,Tuberculosis,Percent,2020,0.04234944814782336
+dalys,Global,Tuberculosis,Number,2020,47962312.76070651
+dalys,Global,Tuberculosis,Percent,2020,0.01742761565315522
+dalys,Global,HIV/AIDS,Number,2020,42313583.280871384
+dalys,Global,HIV/AIDS,Percent,2020,0.01537981058100264
+dalys,Sub-Saharan Africa,Tuberculosis,Number,2020,17564490.54520178
+dalys,Sub-Saharan Africa,Tuberculosis,Percent,2020,0.03062597274923827
+dalys,Sub-Saharan Africa,HIV/AIDS,Number,2020,31375050.37689902
+dalys,Sub-Saharan Africa,HIV/AIDS,Percent,2020,0.05480828275603007
+dalys,Latin America & Caribbean,Tuberculosis,Number,2020,791399.2960804441
+dalys,Latin America & Caribbean,Tuberculosis,Percent,2020,0.00368935432163277
+dalys,Latin America & Caribbean,HIV/AIDS,Number,2020,2169927.656385995
+dalys,Latin America & Caribbean,HIV/AIDS,Percent,2020,0.01011955912773199
+dalys,Middle East & North Africa,Tuberculosis,Number,2020,390256.2289578812
+dalys,Middle East & North Africa,Tuberculosis,Percent,2020,0.00296643800004131
+dalys,Middle East & North Africa,HIV/AIDS,Number,2020,239059.595078432
+dalys,Middle East & North Africa,HIV/AIDS,Percent,2020,0.00182014138238805
+dalys,South Asia,Tuberculosis,Number,2020,20171170.754789717
+dalys,South Asia,Tuberculosis,Percent,2020,0.02961193249063654
+dalys,South Asia,HIV/AIDS,Number,2020,2799138.0247818273
+dalys,South Asia,HIV/AIDS,Percent,2020,0.00410902380917038
+dalys,East Asia & Pacific,Tuberculosis,Number,2020,8286209.325517366
+dalys,East Asia & Pacific,Tuberculosis,Percent,2020,0.01212883175515102
+dalys,East Asia & Pacific,HIV/AIDS,Number,2020,3445523.603894019
+dalys,East Asia & Pacific,HIV/AIDS,Percent,2020,0.00504939547087303
+dalys,North America,Tuberculosis,Number,2020,24838.732457722672
+dalys,North America,Tuberculosis,Percent,2020,1.8477925989261e-4
+dalys,North America,HIV/AIDS,Number,2020,392873.5726708014
+dalys,North America,HIV/AIDS,Percent,2020,0.00291681724110022
+dalys,Europe & Central Asia,Tuberculosis,Number,2020,705705.6095902103
+dalys,Europe & Central Asia,Tuberculosis,Percent,2020,0.00213728305053925
+dalys,Europe & Central Asia,HIV/AIDS,Number,2020,1859437.2476224257
+dalys,Europe & Central Asia,HIV/AIDS,Percent,2020,0.00563139535663271
+ylls,Global,Tuberculosis,Number,2020,43512500.46209457
+ylls,Global,Tuberculosis,Percent,2020,0.02322602614519537
+ylls,Global,HIV/AIDS,Number,2020,38100250.07515375
+ylls,Global,HIV/AIDS,Percent,2020,0.02035174276323663
+ylls,Europe & Central Asia,Tuberculosis,Number,2020,625199.8354430022
+ylls,Europe & Central Asia,Tuberculosis,Percent,2020,0.00301732641104073
+ylls,Europe & Central Asia,HIV/AIDS,Number,2020,1646436.2594559046
+ylls,Europe & Central Asia,HIV/AIDS,Percent,2020,0.00794711739911261
+ylls,East Asia & Pacific,Tuberculosis,Number,2020,7141597.078783209
+ylls,East Asia & Pacific,Tuberculosis,Percent,2020,0.01656744279770519
+ylls,East Asia & Pacific,HIV/AIDS,Number,2020,3176346.204160345
+ylls,East Asia & Pacific,HIV/AIDS,Percent,2020,0.00737867594208706
+ylls,South Asia,Tuberculosis,Number,2020,18411098.5666125
+ylls,South Asia,Tuberculosis,Percent,2020,0.03912153997126456
+ylls,South Asia,HIV/AIDS,Number,2020,2562024.924091808
+ylls,South Asia,HIV/AIDS,Percent,2020,0.00544721859519043
+ylls,Latin America & Caribbean,Tuberculosis,Number,2020,716302.5563964142
+ylls,Latin America & Caribbean,Tuberculosis,Percent,2020,0.00521603378350242
+ylls,Latin America & Caribbean,HIV/AIDS,Number,2020,1992037.5552552736
+ylls,Latin America & Caribbean,HIV/AIDS,Percent,2020,0.01451733803477726
+ylls,Sub-Saharan Africa,HIV/AIDS,Number,2020,28213926.23297306
+ylls,Sub-Saharan Africa,HIV/AIDS,Percent,2020,0.06060365226863367
+ylls,North America,Tuberculosis,Number,2020,21004.664452258585
+ylls,North America,Tuberculosis,Percent,2020,2.7373634069566e-4
+ylls,North America,HIV/AIDS,Number,2020,255902.52481893043
+ylls,North America,HIV/AIDS,Percent,2020,0.00333496762680938
+ylls,Sub-Saharan Africa,Tuberculosis,Number,2020,16222000.272404984
+ylls,Sub-Saharan Africa,Tuberculosis,Percent,2020,0.03475238258008047
+ylls,Middle East & North Africa,Tuberculosis,Number,2020,349731.43861736916
+ylls,Middle East & North Africa,Tuberculosis,Percent,2020,0.00432604624393084
+ylls,Middle East & North Africa,HIV/AIDS,Number,2020,224001.48394597764
+ylls,Middle East & North Africa,HIV/AIDS,Percent,2020,0.00277904111861869
+Prevalence,Global,HIV/AIDS,Number,2020,39174202.0059138
+Prevalence,Global,HIV/AIDS,Percent,2020,0.0051838950924369
+Prevalence,Global,Tuberculosis,Number,2020,1912499588.5994945
+Prevalence,Global,Tuberculosis,Percent,2020,0.2530769857809608
+Prevalence,Sub-Saharan Africa,Tuberculosis,Number,2020,264675644.7633404
+Prevalence,Sub-Saharan Africa,Tuberculosis,Percent,2020,0.2354796836337127
+Prevalence,South Asia,Tuberculosis,Number,2020,446183152.44837785
+Prevalence,South Asia,Tuberculosis,Percent,2020,0.2429916702266584
+Prevalence,Middle East & North Africa,Tuberculosis,Number,2020,91450569.32020424
+Prevalence,Middle East & North Africa,Tuberculosis,Percent,2020,0.2036852240605904
+Prevalence,East Asia & Pacific,Tuberculosis,Number,2020,791559154.7685505
+Prevalence,East Asia & Pacific,Tuberculosis,Percent,2020,0.3481419252930144
+Prevalence,North America,Tuberculosis,Number,2020,46324278.767775625
+Prevalence,North America,Tuberculosis,Percent,2020,0.1322767826648845
+Prevalence,Europe & Central Asia,Tuberculosis,Number,2020,125070343.19641492
+Prevalence,Europe & Central Asia,Tuberculosis,Percent,2020,0.1416765738337175
+Prevalence,Latin America & Caribbean,Tuberculosis,Number,2020,145393370.16429213
+Prevalence,Latin America & Caribbean,Tuberculosis,Percent,2020,0.2296841930390549
+Prevalence,Sub-Saharan Africa,HIV/AIDS,Number,2020,28639023.0973716
+Prevalence,Sub-Saharan Africa,HIV/AIDS,Percent,2020,0.0254802676366428
+Prevalence,South Asia,HIV/AIDS,Number,2020,2085697.6333337745
+Prevalence,South Asia,HIV/AIDS,Percent,2020,0.0011359044227257
+Prevalence,East Asia & Pacific,HIV/AIDS,Number,2020,2199845.785972729
+Prevalence,East Asia & Pacific,HIV/AIDS,Percent,2020,9.675408108571e-4
+Prevalence,Middle East & North Africa,HIV/AIDS,Number,2020,132188.1014448734
+Prevalence,Middle East & North Africa,HIV/AIDS,Percent,2020,2.944208829179e-4
+Prevalence,Europe & Central Asia,HIV/AIDS,Number,2020,2432226.5388016123
+Prevalence,Europe & Central Asia,HIV/AIDS,Percent,2020,0.0027551639684256
+Prevalence,Latin America & Caribbean,HIV/AIDS,Number,2020,1871318.6609438595
+Prevalence,Latin America & Caribbean,HIV/AIDS,Percent,2020,0.0029562363328111
+Prevalence,North America,HIV/AIDS,Number,2020,1785750.3426644325
+Prevalence,North America,HIV/AIDS,Percent,2020,0.0050993210832174
+Incidence,Global,HIV/AIDS,Number,2020,1726331.9135390492
+Incidence,Global,HIV/AIDS,Percent,2020,4.8234665744e-5
+Incidence,Global,Tuberculosis,Number,2020,8436384.967001846
+Incidence,Global,Tuberculosis,Percent,2020,2.357191399638e-4
+Incidence,Latin America & Caribbean,Tuberculosis,Number,2020,187915.88175727057
+Incidence,Latin America & Caribbean,Tuberculosis,Percent,2020,5.8978578407e-5
+Incidence,Latin America & Caribbean,HIV/AIDS,Number,2020,135594.63952417843
+Incidence,Latin America & Caribbean,HIV/AIDS,Percent,2020,4.25595171076e-5
+Incidence,Middle East & North Africa,HIV/AIDS,Number,2020,10933.23991920768
+Incidence,Middle East & North Africa,HIV/AIDS,Percent,2020,5.4926025692e-6
+Incidence,North America,HIV/AIDS,Number,2020,63348.65044717358
+Incidence,North America,HIV/AIDS,Percent,2020,3.62116465965e-5
+Incidence,Middle East & North Africa,Tuberculosis,Number,2020,108602.22161414212
+Incidence,Middle East & North Africa,Tuberculosis,Percent,2020,5.45726803159e-5
+Incidence,North America,Tuberculosis,Number,2020,9802.477850516972
+Incidence,North America,Tuberculosis,Percent,2020,5.6023492517e-6
+Incidence,Europe & Central Asia,HIV/AIDS,Number,2020,196342.73614722284
+Incidence,Europe & Central Asia,HIV/AIDS,Percent,2020,5.13787168001e-5
+Incidence,Europe & Central Asia,Tuberculosis,Number,2020,245568.0101031716
+Incidence,Europe & Central Asia,Tuberculosis,Percent,2020,6.4261358088e-5
+Incidence,South Asia,Tuberculosis,Number,2020,3596043.7691174424
+Incidence,South Asia,Tuberculosis,Percent,2020,3.747585052525e-4
+Incidence,East Asia & Pacific,Tuberculosis,Number,2020,2043968.133224119
+Incidence,East Asia & Pacific,Tuberculosis,Percent,2020,2.346696426443e-4
+Incidence,Sub-Saharan Africa,Tuberculosis,Number,2020,2239922.895604481
+Incidence,Sub-Saharan Africa,Tuberculosis,Percent,2020,3.344445887491e-4
+Incidence,Sub-Saharan Africa,HIV/AIDS,Number,2020,1067967.1541391672
+Incidence,Sub-Saharan Africa,HIV/AIDS,Percent,2020,1.594632047579e-4
+Incidence,East Asia & Pacific,HIV/AIDS,Number,2020,143364.54465895693
+Incidence,East Asia & Pacific,HIV/AIDS,Percent,2020,1.64616595875e-5
+Incidence,South Asia,HIV/AIDS,Number,2020,107283.8686200678
+Incidence,South Asia,HIV/AIDS,Percent,2020,1.11765850709e-5

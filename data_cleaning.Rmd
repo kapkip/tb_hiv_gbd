@@ -1,0 +1,294 @@
+---
+title: "Data Wrangling"
+output: html_document
+date: "2024-09-18"
+---
+
+```{r setup, include=FALSE}
+  if(!require(pacman))install.packages("pacman")
+pacman::p_load(tidyverse,
+               janitor,
+               stringr,
+               plotly,
+               reactable,
+               flexdashboard,
+               gapminder,
+               htmltools,
+               countrycode,
+               sf,
+               here,
+               ggspatial,
+               gganimate,
+               rnaturalearth,
+               rnaturalearthdata,
+               reader
+               )
+#I know this is too many packages, will prune.
+```
+
+```{r}
+
+#GLOBAL DISEASE BURDEN dataset used for prevalence estimates, and HIV inc/death
+#Also contains DALYS and YLL (but just for tb OR HIV)
+gbd_master <- read_csv(here("data/IHME-GBD_2021_DATA.csv"))
+
+# decided to dl another GDB dataset that aggregated by world and region for the sake of ease
+gbd_region <- read_csv(here("data/IHME-GBD_2021_region.csv"))
+
+
+#Gapminder datasets
+tb_all_inc <- read_csv(here("data/all_forms_of_tb_incidence_estimated.csv"))
+
+tb_all_death <- read_csv(here("data/all_forms_of_tb_number_of_deaths_estimated.csv"))
+
+tb_all_detect <- read_csv(here("data/all_forms_of_tb_treatment_coverage_percent.csv"))
+
+tb_inf_detect <- read_csv(here("data/infectious_tb_detection_rate_percent.csv"))
+
+tb_hiv_inc <- read_csv(here("data/tb_hivplus_incidence_estimated.csv"))
+
+tb_hiv_death <- read_csv(here("data/tb_hivplus_number_of_deaths_estimated.csv"))
+
+#hiv_inc <- read_csv(here("data/newly_hiv_infected_number_all_ages.csv"))
+
+#hiv_death <- read_csv(here("data/annual_hiv_deaths_number_all_ages.csv"))
+
+pop <- read_csv(here("data/pop.csv"))
+
+
+```
+
+
+```{r}
+#cleaning the GBD dataset
+#GBD Results tool:
+#Use the following to cite data included in this download:
+#Global Burden of Disease Collaborative Network.
+#Global Burden of Disease Study 2021 (GBD 2021) Results.
+#Seattle, United States: Institute for Health Metrics and Evaluation (IHME), 2022.
+#Available from https://vizhub.healthdata.org/gbd-results/.
+
+#Country Level
+gbd_master_clean <- gbd_master %>% 
+  select(1:2, 5:8) %>% 
+  mutate(iso3c = countrycode(location, "country.name", "iso3c"))
+
+#prevalence
+gbd_prevalence <- gbd_master_clean %>% 
+  filter(measure == "Prevalence",
+         metric == "Number")
+
+gbd_prevalence_tb <- gbd_prevalence %>% 
+  rename(tb_prevalence = val) %>% 
+  filter(cause == "Tuberculosis") %>% 
+  select(2, 5:7)
+
+gbd_prevalence_hiv <- gbd_prevalence %>% 
+  rename(hiv_prevalence = val) %>% 
+  filter(cause == "HIV/AIDS") %>% 
+  select(2, 5:7)
+
+
+#HIV incidence and death
+gbd_death_hiv <- gbd_master_clean %>% 
+  filter(measure == "Deaths",
+         metric == "Number",
+         cause == "HIV/AIDS",
+         ) %>% 
+  rename(hiv_deaths = val) %>% 
+  select(2, 5:7)
+
+gbd_inc_hiv <- gbd_master_clean %>% 
+  filter(measure == "Incidence",
+         metric == "Number",
+         cause == "HIV/AIDS",
+         ) %>% 
+  rename(hiv_incidence = val) %>% 
+  select(2, 5:7)
+
+```
+
+
+```{r}
+
+###REMEMBER DALYS 
+
+#RECHECK PREV ESTIMATES
+
+
+#Regional Level 
+gbd_region_clean <- gbd_region %>% 
+  select(1:2, 5:8) %>% 
+  mutate(location = str_replace(location, " - WB", ""),
+         measure = case_when(
+           str_starts(measure, "DAL") ~ "dalys",
+           str_starts(measure, "YLL") ~ "ylls",
+           TRUE ~ measure
+  ))
+
+```
+
+```{r}
+#grabbing population data
+pop_clean <- pop %>% 
+  select(country, 202:222) 
+
+# Function to clean numeric data that works with vectors
+clean_numeric <- function(x) {
+  # Extract numeric part
+  numeric_part <- as.numeric(gsub("[^0-9.]", "", x))
+  
+  # Apply correct multiplier
+  multiplier <- ifelse(grepl("K", x, ignore.case = TRUE), 1e3,
+                 ifelse(grepl("M", x, ignore.case = TRUE), 1e6,
+                 ifelse(grepl("B", x, ignore.case = TRUE), 1e9, 1)))
+  
+   return(numeric_part * multiplier)
+}
+
+# Apply the function to columns 2 to 22 using across()
+pop_clean <- pop_clean %>%
+  mutate(across(2:22, clean_numeric))
+
+#add codes
+pop_clean <- pop_clean %>%
+  mutate(iso3c = countrycode(country, "country.name", "iso3c"))
+
+pop_clean <- pop_clean %>%
+  mutate(region = countrycode(iso3c, "iso3c", "region"))
+
+#reorder for my sanity
+pop_clean <- pop_clean %>% 
+  select(iso3c, region, everything())
+
+#pivot
+pop_long <- pop_clean %>% 
+  pivot_longer(4:24, names_to = "year", values_to = "population")
+
+```
+
+```{r}
+#cleaning other sets
+
+clean_numeric <- function(x) {
+  
+  numeric_part <- as.numeric(gsub("[^0-9.]", "", x))
+  
+  multiplier <- ifelse(grepl("K", x, ignore.case = TRUE), 1e3,
+                 ifelse(grepl("M", x, ignore.case = TRUE), 1e6,
+                 ifelse(grepl("B", x, ignore.case = TRUE), 1e9, 1)))
+  
+   return(numeric_part * multiplier)
+}
+
+#Cleaning TB incidence
+tb_all_inc <- tb_all_inc %>%
+  mutate(across(2:22, clean_numeric))
+
+tb_all_inc <- tb_all_inc %>% 
+  mutate(iso3c = countrycode(country, "country.name", "iso3c"))
+
+tb_all_inc <- tb_all_inc %>% 
+  pivot_longer(2:22, names_to = "year", values_to = "tb_incidence")
+
+#Cleaning TB death
+tb_all_death <- tb_all_death %>%
+  mutate(across(2:22, clean_numeric))
+
+tb_all_death <- tb_all_death %>% 
+  mutate(iso3c = countrycode(country, "country.name", "iso3c"))
+
+tb_all_death <- tb_all_death %>% 
+  pivot_longer(2:22, names_to = "year", values_to = "tb_deaths")
+
+#tb hiv incidence
+tb_hiv_inc <- tb_hiv_inc %>%
+  mutate(across(2:22, clean_numeric))
+
+tb_hiv_inc <- tb_hiv_inc %>% 
+  mutate(iso3c = countrycode(country, "country.name", "iso3c"))
+
+tb_hiv_inc <- tb_hiv_inc %>% 
+  pivot_longer(2:22, names_to = "year", values_to = "tb_hiv_incidence")
+
+#tb hiv death
+tb_hiv_death <- tb_hiv_death %>%
+  mutate(across(2:22, clean_numeric))
+
+tb_hiv_death <- tb_hiv_death %>% 
+  mutate(iso3c = countrycode(country, "country.name", "iso3c"))
+
+tb_hiv_death <- tb_hiv_death %>% 
+  pivot_longer(2:22, names_to = "year", values_to = "tb_hiv_deaths")
+
+#tb all detection (this will be useful later a lot of cleaning to do)
+tb_all_detect <- tb_all_detect %>%
+  mutate(across(2:22, clean_numeric))
+
+tb_all_detect <- tb_all_detect %>% 
+  mutate(iso3c = countrycode(country, "country.name", "iso3c"))
+
+tb_all_detect <- tb_all_detect %>% 
+  pivot_longer(2:22, names_to = "year", values_to = "tb_detect_perc")
+
+```
+
+```{r}
+#joining gapminder data
+tb_full <- left_join(pop_long, tb_all_inc, by = c("iso3c", "year", "country")) #adding country works out the same
+
+tb_full_2 <- left_join(tb_full, tb_all_death, by = c("iso3c", "year", "country"))
+
+tb_full_3 <- left_join(tb_full_2, tb_all_detect, by = c("iso3c", "year", "country"))
+
+tb_hiv_full <- left_join(tb_full_3, tb_hiv_inc, by = c("iso3c", "year", "country"))
+
+tb_hiv_full <- left_join(tb_hiv_full, tb_hiv_death, by = c("iso3c", "year", "country"))
+
+#basic rate calcs
+
+#filtering out vatican
+tb_hiv_full <- tb_hiv_full %>% 
+  filter(!iso3c == "VAT")
+
+#calculating rates
+tb_hiv_full_calcs <- tb_hiv_full %>%
+  mutate(tb_inc_per_100K = round(tb_incidence/population*100000),
+         tb_death_per_100K = round(tb_deaths/population*100000),
+         tb_hiv_inc_per_100K = round(tb_hiv_incidence/population*100000),
+         tb_hiv_death_per_100K = round(tb_hiv_deaths/population *1000000),
+         region = as.factor(region),
+         year = as.numeric(year))
+
+#joining gbd data
+
+gbd_data <- left_join(gbd_prevalence_tb, gbd_prevalence_hiv, by = c("location", "year", "iso3c"))
+
+gbd_data2 <- left_join(gbd_data, gbd_inc_hiv, by = c("location", "year", "iso3c"))
+
+gbd_data3 <- left_join(gbd_data2, gbd_death_hiv, by = c("location", "year", "iso3c"))
+
+gbd_data_final <- gbd_data3 %>% 
+  mutate(year = as.numeric(year))
+
+tb_hiv_gbd <- left_join(tb_hiv_full_calcs, gbd_data_final, by = c("year", "iso3c"))
+
+tb_hiv_gbd_calcs <- tb_hiv_gbd %>% 
+  mutate(hiv_inc_per_100K = round(hiv_incidence/population*1000000),
+         hiv_death_per_100K = round(hiv_deaths/population*1000000),
+         region = factor(region))
+
+
+write_csv(tb_hiv_gbd_calcs, here("data/tb_hiv_full_final.csv"))
+```
+
+
+```{r}
+#regional tb and hiv summary data for 2020
+tb_hiv_gbd_regional_2020 <- gbd_region_clean %>% 
+  filter(year == 2020)
+
+write_csv(tb_hiv_gbd_regional_2020, here("data/tb_hiv_regional_2020.csv"))
+```
+
+

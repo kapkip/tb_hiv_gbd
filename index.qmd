@@ -1,0 +1,632 @@
+---
+title: "Global Burden of Tuberculosis and HIV"
+name: "Cassandra Pantuso"
+date: "2024-09-16"
+format:
+  dashboard:
+    orientation: columns
+    css: styles.css
+theme: flatly
+---
+
+
+```{r}
+# load packages
+if(!require(pacman))install.packages("pacman")
+pacman::p_load(tidyverse,
+               janitor,
+               stringr,
+               plotly,
+               bslib,
+               bsicons,
+               gapminder,
+               htmltools,
+               countrycode,
+               sf,
+               here,
+               ggspatial,
+               rnaturalearth,
+               rnaturalearthdata
+)
+
+```
+
+```{r}
+#data is cleaned in a separate document, as it was overwhelming .qmd workspace. will try to include in onsite upload, will supply on request.
+
+#data derived from gapminder: tb and tb/hiv (incidence, death), percent tb detected, population
+#data derived from GBD study: hiv (inc, prev, death), tb(prev), YLLs, DALYs
+
+tb_hiv <- read_csv(here("data/tb_hiv_full_final.csv"))
+tb_hiv_regional_2020 <- read_csv(here("data/tb_hiv_regional_2020.csv"))
+```
+
+```{r}
+
+#.csv refactor
+tb_hiv <- tb_hiv %>% 
+  mutate(region = as.factor(region))
+
+#sf geom
+world <- ne_countries(returnclass = "sf")
+
+#joined with geometry
+tb_hiv_sf <- world %>%
+  left_join(tb_hiv, by = c("adm0_a3" = "iso3c"))
+
+
+#consistent palettes
+
+reg_pal <- c("East Asia & Pacific" = "#FED439FF",
+"South Asia" = "#709AE1FF",
+"Sub-Saharan Africa" = "#1A9993FF",
+"Latin America & Caribbean" = "#D2AF81FF",
+"Europe & Central Asia" = "#FD7446FF",
+"Middle East & North Africa" = "#D5E4A2FF",
+"North America" = "#6b839d") 
+
+reg_pal_alpha <- c("#FED439FF", "#FD7446FF", "#D2AF81FF", "#D5E4A2FF", "#6B839D", "#709AE1FF", "#1A9993FF") #here's a workaround for the tree map, as mapping is done alphabetically
+
+
+#flatly theme colors for reference
+colors = c("#2C3E50", "#18BC9C", "#3498DB", "#F39C12", "#E74C3C")
+
+# abridged/modified flatly text settings for reference
+t <- list(
+  family = "Lato",
+  size = 18,
+  color = ""
+  )
+t1 <- list(
+  family = "Lato",
+  size = 14,
+  color = ""
+)
+
+```
+
+# Home
+
+::: {style="display: flex; justify-content: center; align-items: center; height: 100vh;"}
+<div class="custom-background" style="text-align: left;"> 
+  <b><font size="7">Unpacking the Global Burden of TB and HIV Coinfection</font></b> <br><br>
+  <font size="4">
+  Tuberculosis (TB) remains a significant global health challenge, affecting millions of people worldwide. Despite advancements in detection and treatment, approximately one-quarter of the world's population is infected with TB, resulting in over a million deaths annually. This situation reflects not only a public health crisis but also a crisis of social inequities.<br><br>
+
+  The burden of TB is not uniform across the globe; it disproportionately affects those who are immunocompromised, live in poor conditions, and have other risk factors such as malnutrition, overcrowded living environments, and limited access to healthcare. Among these risk factors, HIV is the leading contributor to TB infections.<br><br>
+
+  Analyzing the global distribution of tuberculosis and human immunodeficiency virus (HIV), as well as the prevalence of TB-HIV co-infection, offers critical insights into the challenges encountered in combating TB. By exploring this relationship, we can gain a deeper understanding of the complexities involved and formulate more effective strategies to tackle both diseases.
+  </font>
+</div>
+<br>
+<a href="#TB" style="text-decoration: none;">
+  <button style="padding: 10px 20px; background-color: #2C3E50; color: white; border: none; border-radius: 5px;">Explore the data</button>
+</a>
+<br>
+:::
+
+
+# Tuberculosis at a Glance {#TB}
+
+### Column {width="20%"}
+
+```{r}
+# value box
+
+#prevalence 
+TB_global_value <- tb_hiv_regional_2020 %>% 
+  filter(metric == "Number" & cause == "Tuberculosis" & measure == "Prevalence") %>% 
+  arrange(-year) %>% 
+  head(1) %>% 
+  pull(val) %>% 
+  round()
+
+TB_global_value_fake <- "1.7 Billion" #using WHO est. for 2020, since my prevalence est. were not adding up
+
+value_box(
+  title = "Population with TB (2020)",
+  value = TB_global_value_fake,
+  showcase = bsicons::bs_icon("exclamation-triangle-fill"),
+  theme = value_box_theme(bg = "#395269")
+)
+
+```
+
+```{r}
+# Value box
+
+#Daly 
+TB_daly <- tb_hiv_regional_2020 %>% 
+  filter(cause == "Tuberculosis",
+         location == "Global",
+         measure == "dalys",
+         metric == "Number") %>% 
+  mutate(val = val/7820) %>%  #I think this will give dalys/100k (2020 pop est. 7.82 bil)
+  pull(val) %>% 
+  round()
+
+value_box(
+  title = "DALYs per 100k (2020)",
+  value = TB_daly,
+  showcase = bsicons::bs_icon("bandaid"),
+  theme = value_box_theme(bg = "#395269")
+)
+
+#using available WHO population estimate
+```
+
+```{r}
+# Value Box
+
+#YLL
+TB_yll <- tb_hiv_regional_2020 %>% 
+  filter(cause == "Tuberculosis",
+         location == "Global",
+         measure == "ylls",
+         metric == "Number") %>% 
+  mutate(val = val/7820) %>%  #I think this will give dalys/100k (2020 pop 7.82 bil)
+  pull(val) %>% 
+  round()
+
+value_box(
+  title = "YLLs per 100k (2020)",
+  value = TB_yll,
+  showcase = bsicons::bs_icon("heart-pulse"),
+  theme = value_box_theme(bg = "#395269"))
+```
+
+### Column {.tabset width="70%"}
+
+#### TB Prevalence
+```{r title = "Estimated TB Prevalence by Region and Country (2020)"}
+
+
+#Tree map of TB PREVALENCE
+tb_hiv_gbd_tree <- tb_hiv %>% 
+  group_by(region) %>% 
+  filter(year == 2020) %>% 
+  select(region, country, tb_prevalence) %>% 
+  drop_na(tb_prevalence)%>% 
+  mutate(tb_prevalence = round(tb_prevalence))
+
+
+# summarize data frame to get parent container totals (they are listed in the same column as country)
+prev_tree <- tb_hiv_gbd_tree %>% 
+  group_by(region) %>% 
+  summarise(tb_prevalence = sum(tb_prevalence)) %>% 
+  rename(country = region) %>%            # change columns
+  mutate(region = "") %>%                 # create blank column replacement
+  select(names(tb_hiv_gbd_tree))          # put columns back in order
+
+prev_parent <- rbind(prev_tree, tb_hiv_gbd_tree) %>% as.data.frame() # combine with original data
+
+
+# Create the treemap
+prev_tree_map <- plot_ly(
+  data = prev_parent,
+  type = "treemap",
+  labels = ~country,
+  parents = ~region,
+  values = ~tb_prevalence,
+  textinfo = "label",
+  branchvalues = "total",
+  marker = list(colors = reg_pal_alpha) #colors are mapped alphabetically based on region
+)
+
+
+# Apply layout
+prev_tree_map <- prev_tree_map %>% layout(
+  font = t,
+  margin = list(t = 50, l = 0, r = 0, b = 0)
+)
+
+prev_tree_map
+```
+
+#### TB Aggregate Incidence
+
+```{r title = "Total TB Cases by Country and Region (2000-2020)"}
+
+inc_sum <- tb_hiv %>%
+  group_by(region, country) %>%
+  summarise(total_incidence = sum(tb_incidence, na.rm = TRUE)) 
+
+# summarize data frame to get parent container totals (they are listed in the same column as country)
+inc_tree <- inc_sum %>% 
+  group_by(region) %>%
+  summarise(total_incidence = sum(total_incidence)) %>% 
+  rename(country = region) %>%            # change columns
+  mutate(region = "") %>%              # create blank column replacement
+  select(names(inc_sum))          # put columns back in order
+
+inc_sum_parent <- rbind(inc_tree, inc_sum) %>% as.data.frame() # combine with original data
+
+inc_tree_map <- plot_ly(
+  data = inc_sum_parent,
+  type = "treemap",
+  labels = ~country,
+  parents = ~region,
+  values = ~total_incidence,
+  textinfo = "label",
+  branchvalues = "total",
+  marker = list(colors = reg_pal_alpha)
+)
+
+# Apply layout
+inc_tree_map <- inc_tree_map %>% layout(
+  font = t,
+  margin = list(t = 50, l = 0, r = 0, b = 0)
+)
+
+inc_tree_map
+```
+
+
+
+```{r results='hide'}
+#Summarizing for Region
+tb_hiv_reg <- tb_hiv %>%
+na.omit() %>% 
+  group_by(year, region) %>%
+  summarize(tb_hiv_incidence = sum(tb_hiv_incidence, na.rm = TRUE),
+            tb_hiv_deaths = sum(tb_hiv_deaths, na.rm = TRUE),
+            tb_incidence = sum(tb_incidence, na.rm = TRUE),
+            tb_deaths = sum(tb_deaths, na.rm = TRUE),
+            hiv_deaths = sum(hiv_deaths, na.rm = TRUE),
+            hiv_incidence = sum(hiv_incidence, na.rm = TRUE),
+            tb_detect_perc = mean(tb_detect_perc, na.rm = TRUE))
+
+#could not manually scale y-axis below 0.1 for some reason
+common_limits <- range(
+  c(tb_hiv_reg$tb_deaths/tb_hiv_reg$tb_incidence,
+    tb_hiv_reg$tb_hiv_deaths/tb_hiv_reg$tb_hiv_incidence), na.rm = TRUE
+)
+```
+
+#### Detection and Treatment
+
+##### TB Detection Percentage by Region (2020) {width="50%"}
+```{r title = "TB Detection Percentage by Region (2020)"}
+
+# filtering for 2020 and reordering
+data_2020 <- tb_hiv_reg %>%
+  filter(year == 2020) %>%
+  mutate(tb_hiv_inc_perc = (tb_hiv_incidence / sum(tb_hiv_incidence)) * 100, tb_hiv_death_perc = (tb_hiv_deaths / sum(tb_hiv_deaths)) * 100, region = fct_reorder(region, tb_detect_perc, .desc = TRUE))
+
+# histogram
+detect_2020 <- ggplot(data_2020, aes(x = region, y = round(tb_detect_perc), fill = region, text = paste0("Region: ", region, "\nPercent: ", round(tb_detect_perc), "%"))) +
+  geom_bar(stat = "identity") +
+  labs(
+       x = "",
+       y = "") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "none") +
+  scale_fill_manual(values = reg_pal)
+
+detect_2020_plotly <- ggplotly(detect_2020, tooltip = "text")
+
+detect_2020_plotly
+```
+
+##### Estimated Percentage of TB Cases Detected and Treated by Region {width="50%"}
+```{r title = "Estimated Percentage of TB Cases Detected and Treated by Region"}
+
+# Percentage of cases detected and treated
+treatment <- ggplot(tb_hiv_reg, aes(x = year, y = tb_detect_perc, color = region, group = region, text = paste0("Region: ", region, "\nPercent: ", round(tb_detect_perc), "%"))) +
+  geom_line(size = 1) +
+  labs(x = "",
+       y = "") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  scale_color_manual(values = reg_pal)
+
+
+# plotly
+treatment_plotly <- ggplotly(treatment, tooltip = "text")
+
+treatment_plotly
+```
+
+
+#### Understanding the Estimates
+<b>TB Prevalence and Incidence Aggregate</b><br> 
+
+Understanding the global burden of tuberculosis (TB) is a complex challenge. Accurately measuring the number of people infected with TB is difficult, as estimates from the World Health Organization (WHO) can vary significantly due to challenges in detection, the presence of latent TB, and other factors. It should be noted that the prevalence estimates taken from the Global Burden of Disease Project may be significantly higher than actual values. For example, in the tree map the prevalence estimate for the United States is 42.5 million, whereas the CDC estimates prevalence to be closer to 18 million. The estimates should therefore be used as a rough guide as to distribution of disease burden. A more reliable measure of the global burden may be the aggregate of newly detected cases, as these cases are often more indicative of the current epidemic. By analyzing data from 2000 to 2020, we can gain insights into regions of the world that experience a disproportionate burden of TB.<br>
+
+<b>TB Detection and Treatment</b><br>
+Both the most recent (2020) data and longitudinal data are presented for the estimated percentage of TB cases detected and treated. It is important to note that the significant decline in detection rates across all regions in 2020 was likely influenced by the COVID-19 pandemic. This observation underscores the fact that the fight against TB is closely linked to the strength and capacity of healthcare infrastructure, which can be significantly affected by regional and global events.
+
+
+# TB and HIV Measures of Mortality
+
+## Col {width="65%"}
+
+### {.tabset }
+
+#### TB Deaths
+```{r title = "TB Mortality Rate"}
+death_rate_map <- plot_geo(tb_hiv, locationmode = 'country names') %>%
+  add_trace(
+    z = ~tb_death_per_100K,
+    zmin=0,
+    zmax=505,
+    locations = ~country, 
+    frame = ~year,
+    color = ~tb_death_per_100K,
+    colors = c("#d3f4e6", "#18BC9C","#255a5e", "#2C3E50"),
+    colorbar = list(title = "TB Deaths<br>(per 100K)", 
+                    len = 1,  # Ensures the colorbar stays the same size
+                    yanchor = "middle", 
+                    y = 0.5)
+  )
+
+death_rate_map
+```
+
+#### HIV Deaths
+```{r title = "HIV Mortality Rate"}
+death_rate_map2 <- plot_geo(tb_hiv, locationmode = 'country names') %>%
+  add_trace(
+    z = ~hiv_death_per_100K,
+    zmin=0,
+    zmax=9342,
+    locations = ~country, 
+    frame = ~year,
+    color = ~hiv_death_per_100K,
+    colors = c("#FFDABC", "#E74C3C", "#74261e", "#170806"),
+    colorbar = list(title = "HIV Deaths<br>(per 100K)", 
+                    len = 1,  # Ensures the colorbar stays the same size
+                    yanchor = "middle", 
+                    y = 0.5)
+  )
+
+death_rate_map2
+```
+
+
+#### TB-HIV Deaths
+
+```{r title = "TB-HIV Mortality Rate"}
+death_rate_map3 <- plot_geo(tb_hiv, locationmode = 'country names') %>%
+  add_trace(
+    z = ~tb_hiv_death_per_100K,
+    zmin=0,
+    zmax=4595,
+    locations = ~country, 
+    frame = ~year,
+    color = ~tb_hiv_death_per_100K,
+    colors = c("#e9e2ee", "#a69cac","#474973","#290e56"),
+    colorbar = list(title = "TB-HIV Deaths<br>(per 100K)", 
+                    len = 1,  # Ensures the colorbar stays the same size
+                    yanchor = "middle", 
+                    y = 0.5)
+  )
+
+death_rate_map3 
+
+
+```
+
+
+#### Discussion
+
+<b>Understanding Deaths</b><br>
+
+The choropleth maps and bar charts on this page offer two different ways to examine the mortality burden of TB, HIV, and TB-HIV co-infection: by showing mortality rates by country and deaths as a percentage of the global total for each country. These metrics provide a more nuanced view of the disease burden. For instance, while India accounts for a high percentage of global deaths across all causes, its mortality rate is comparatively lower than that of countries like South Africa.
+
+<b>Regional Mortality-to-Incidence Ratios</b><br>
+
+As observed in these plots, there is a consistent and steady decline in the TB mortality-to-incidence ratio (MIR) globally. In contrast, the MIR for TB-HIV coinfection presents a more complex relationship. While the overall trend shows a downward trajectory, the MIR for coinfection is significantly higher and exhibits greater volatility, indicating fluctuations over time. This variability suggests that the rates of infection and deaths from TB-HIV coinfection are influenced by a range of interconnected variables, such as: immunocompromised status, variability in healthcare access, coinfection complexity, public health interventions, and broader epidemiological trends.
+
+
+##  {width="40%"}
+
+###  {.tabset height="30%"}
+
+#### TB Deaths
+```{r}
+# global total deaths
+global_totals <- tb_hiv %>%
+  summarise(global_tb_deaths = sum(tb_deaths, na.rm = TRUE),
+            global_hiv_deaths = sum(hiv_deaths, na.rm = TRUE),
+            global_tb_hiv_deaths = sum(tb_hiv_deaths, na.rm = TRUE))
+
+# global deaths for each country
+top_cum_deaths <- tb_hiv %>%
+  group_by(country) %>%                   
+  summarise(tb_cum_deaths = sum(tb_deaths, na.rm = TRUE),
+            hiv_cum_deaths = sum(hiv_deaths, na.rm = TRUE),
+            tb_hiv_cum_deaths = sum(tb_hiv_deaths, na.rm = TRUE)) %>%
+  mutate(tb_percent = (tb_cum_deaths / global_totals$global_tb_deaths) * 100,
+         hiv_percent = (hiv_cum_deaths / global_totals$global_hiv_deaths) * 100,
+         tb_hiv_percent = (tb_hiv_cum_deaths / global_totals$global_tb_hiv_deaths) * 100)
+
+# For top 5 TB deaths by percentage
+top_tb <- top_cum_deaths %>%
+  top_n(5, tb_percent) %>%
+  arrange(desc(tb_percent)) %>%
+  mutate(death_type = "TB Deaths")
+
+# For top 5 HIV deaths by percentage
+top_hiv <- top_cum_deaths %>%
+  top_n(5, hiv_percent) %>%
+  arrange(desc(hiv_percent)) %>%
+  mutate(death_type = "HIV Deaths")
+
+# For top 5 TB/HIV deaths by percentage
+top_tb_hiv <- top_cum_deaths %>%
+  top_n(5, tb_hiv_percent) %>%
+  arrange(desc(tb_hiv_percent)) %>%
+  mutate(death_type = "TB/HIV Deaths")
+
+
+#plot
+tb_plot <- ggplot(top_tb, aes(x = reorder(country, tb_percent), 
+                               y = tb_percent, 
+                               fill = death_type,
+                               text = paste0("Country: ", country, "\nPercent: ", round(tb_percent, 2), "%"))) +
+  geom_bar(stat = "identity", fill = "#255a5e") +
+  labs(title = "Top 5 Countries for TB Deaths", 
+       x = "Country", 
+       y = "Percentage of Global Deaths") +
+  theme_minimal() +
+  theme(axis.title.y = element_blank(),
+        axis.title.x = element_blank()) +  
+  coord_flip() 
+
+# plotly
+tb_plotly <- ggplotly(tb_plot, tooltip = "text")
+
+# subtitle
+tb_plotly <- tb_plotly %>% layout(font = list(size=16),
+  title = list(text = "Top 5 Countries for TB Deaths<br><sup>Percentage of Global TB Deaths 2000-2020</sup>"),
+  margin = list(t = 50, l = 0, r = 0, b = 0)
+)
+
+
+tb_plotly
+
+```
+
+#### HIV Deaths
+
+```{r}
+# Plot for HIV Deaths
+
+hiv_plot <- ggplot(top_hiv, aes(x = reorder(country, hiv_percent), 
+                                 y = hiv_percent, 
+                                 fill = death_type,
+                                 text = paste0("Country: ", country, "\nPercent: ", round(hiv_percent, 2), "%"))) +
+  geom_bar(stat = "identity", fill = "#74261e") +
+  labs(title = "Top 5 Countries for HIV Percentage of Global Deaths (2000-2020)",
+       x = "Country", y = "Percentage of Global Deaths") +
+  theme_minimal() +
+  theme(axis.title.y = element_blank(),
+        axis.title.x = element_blank()) +  
+  coord_flip()
+
+# plotly
+hiv_plotly <- ggplotly(hiv_plot, tooltip = "text")
+
+# subtitle
+hiv_plotly <- hiv_plotly %>% layout( font = list(size=16),
+  title = list(text = "Top 5 Countries for HIV Deaths<br><sup>Percentage of Global HIV Deaths 2000-2020</sup>"),
+  margin = list(t = 50, l = 0, r = 0, b = 0)
+)
+hiv_plotly
+```
+
+#### TB-HIV Deaths
+
+```{r}
+# Plot for TB/HIV Deaths
+tb_hiv_plot <- ggplot(top_tb_hiv, aes(x = reorder(country, tb_hiv_percent), y = tb_hiv_percent, fill = death_type, text = paste0("Country: ", country, "\nPercent: ", round(tb_hiv_percent, 2), "%"))) +
+  geom_bar(stat = "identity", fill = "#290e56") +
+  labs(title = "Top 5 Countries for TB/HIV Percentage of Global Deaths (2000-2020)",
+       x = "Country", y = "Percentage of Global Deaths") +
+  theme_minimal() +
+  theme(axis.title.y = element_blank(),
+        axis.title.x = element_blank()) +
+  coord_flip()
+
+#plotly
+tb_hiv_plotly <- ggplotly(tb_hiv_plot, tooltip = "text")
+
+# subtitle
+tb_hiv_plotly <- tb_hiv_plotly %>% layout( font = list(size=16),
+  title = list(text = "Top 5 Countries for TB-HIV Deaths<br><sup>Percentage of Global TB-HIV Deaths 2000-2020</sup>"),
+  margin = list(t = 50, l = 0, r = 0, b = 0)
+)
+tb_hiv_plotly
+```
+
+
+###  {.tabset height="70%"}
+
+#### TB MIR by Region
+
+```{r}
+# Plotly of TB MIR
+
+# ggplot
+tb_mir <- ggplot(tb_hiv_reg, aes(x = year, y = tb_deaths/tb_incidence, color = region, group = region, 
+                            text = paste(region, "<br>",
+                                         "Year: ", year, "<br>",
+                                         "TB MIR: ", round(tb_deaths/tb_incidence, 2)))) +
+  geom_line(size = 1) +
+  labs(title = "Mortality-to-Incidence Ratio of TB Infection by Region",
+       x = "Year",
+       y = "TB MIR") +
+  theme_minimal() +
+  scale_x_continuous(breaks = seq(2000, 2020, by = 5)) +
+  scale_y_continuous(limits = common_limits) +
+  scale_color_manual(values = reg_pal)
+
+# plotly
+tb_mir_plotly <- ggplotly(tb_mir, tooltip = "text") %>% 
+  layout(
+    title = list(text = "Mortality-to-Incidence Ratio of TB Infection",
+ font = list(size = 16),
+  margin = list(t = 50, l = 0, r = 0, b = 0),
+      xanchor = "left"),
+    xaxis = list(title = "", showgrid = T),
+    yaxis = list(title = "", showgrid = T),
+    showlegend = FALSE
+  )
+
+tb_mir_plotly
+```
+
+
+ 
+#### TB-HIV MIR by Region
+
+```{r }
+#plotly of TB/HIV MIR
+
+# ggplot
+tb_hiv_mir <- ggplot(tb_hiv_reg, aes(x = year, y = tb_hiv_deaths/tb_hiv_incidence, color = region, group = region, 
+                            text = paste(region, "<br>",
+                                         "Year: ", year, "<br>",
+                                         "TB-HIV MIR: ", round(tb_hiv_deaths/tb_hiv_incidence, 2)))) +
+  geom_line(size = 1) +
+  labs(title = "Mortality-to-Incidence Ratio of TB-HIV Coinfection<br>by Region",
+       x = "Year",
+       y = "TB-HIV MIR") +
+  theme_minimal() +
+  scale_x_continuous(breaks = seq(2000, 2020, by = 5)) +
+  scale_y_continuous(limits = common_limits) +
+  scale_color_manual(values = reg_pal)
+
+# plotly
+tb_hiv_plotly <- ggplotly(tb_hiv_mir, tooltip = "text") %>% 
+  layout(
+    title = list(text = "Mortality to Incidence Ratio of TB-HIV Coinfection",
+ font = list(size = 16),
+  margin = list(t = 50, l = 0, r = 0, b = 0),
+      xanchor = "left"),
+    xaxis = list(title = "", showgrid = T),
+    yaxis = list(title = "", showgrid = T),
+    showlegend = FALSE
+  )
+
+
+tb_hiv_plotly
+
+```
+
+
+
+# About
+
+This visualizations on this site were made using WHO and IMHE data from [Gapminder](www.gapminder.org/data/) and the [Global Burden of Disease Study](https://vizhub.healthdata.org/gbd-results/) collaborative network.<br>
+
+Gapminder Foundation is a non-profit venture registered in Stockholm, Sweden, that promotes sustainable global development and achievement of the United Nations Millennium Development Goals by increased use and understanding of statistics and other information about social, economic, and environmental development at local, national, and global levels.<br>
+
+The Global Burden of Disease Study is a comprehensive regional and global research program of disease burden that assesses mortality and disability from major diseases, injuries, and risk factors. GBD is a collaboration of over 3600 researchers from 145 countries. GBD is based in the Institute for Health Metrics and Evaluation (IHME) at the University of Washington and funded by the Bill and Melinda Gates Foundation.
+
+
+
+
+

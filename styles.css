@@ -1,0 +1,45 @@
+.custom-background {
+  background-image: url("https://globetechcdn.com/mobile_labmedica/images/stories/articles/article_images/2021-05-18/RLJ-128A.jpg");
+  background-size: cover;
+  background-position: center;
+  width: 100%;
+  height: 100vh; /* Change to fixed height to test */
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  color: white;
+  text-align: center;
+  /*border: 1px solid red; /* Debugging border */
+}
+
+.custom-background::before {
+  content: ""; /* Create a pseudo-element for the overlay */
+  position: absolute; /* Position it absolutely to cover the entire area */
+  top: 0; /* Align to the top */
+  left: 0; /* Align to the left */
+  right: 0; /* Align to the right */
+  bottom: 0; /* Align to the bottom */
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent dark overlay */
+  border-radius: 10px; /* Optional: Add rounded corners */
+  z-index: 1; /* Ensure it sits below the text */
+}
+
+.custom-background * {
+  position: relative; /* Ensure child elements stay above the overlay */
+  z-index: 2; /* Bring text above the overlay */
+}
+
+/* Main tabs */
+.nav-tabs .nav-link {
+    padding: 5px 10px; /* Adjust padding for smaller main tabs */
+    font-size: 16px;   /* Adjust font size for smaller text */
+}
+
+/* Sub-tabs */
+.nav-pills .nav-link { /* Adjust if sub-tabs use a different class like .nav-pills */
+    padding: 3px 8px;  /* Adjust padding for smaller sub-tabs */
+    font-size: 12px;    /* Adjust font size for smaller sub-tab text */
+}
