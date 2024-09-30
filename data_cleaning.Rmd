@@ -9,21 +9,15 @@ date: "2024-09-18"
 pacman::p_load(tidyverse,
                janitor,
                stringr,
-               plotly,
-               reactable,
-               flexdashboard,
                gapminder,
-               htmltools,
                countrycode,
                sf,
                here,
-               ggspatial,
-               gganimate,
                rnaturalearth,
                rnaturalearthdata,
                reader
                )
-#I know this is too many packages, will prune.
+
 ```
 
 ```{r}
@@ -48,10 +42,6 @@ tb_inf_detect <- read_csv(here("data/infectious_tb_detection_rate_percent.csv"))
 tb_hiv_inc <- read_csv(here("data/tb_hivplus_incidence_estimated.csv"))
 
 tb_hiv_death <- read_csv(here("data/tb_hivplus_number_of_deaths_estimated.csv"))
-
-#hiv_inc <- read_csv(here("data/newly_hiv_infected_number_all_ages.csv"))
-
-#hiv_death <- read_csv(here("data/annual_hiv_deaths_number_all_ages.csv"))
 
 pop <- read_csv(here("data/pop.csv"))
 
