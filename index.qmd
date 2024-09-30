@@ -95,7 +95,7 @@ t1 <- list(
 
   The burden of TB is not uniform across the globe; it disproportionately affects those who are immunocompromised, live in poor conditions, and have other risk factors such as malnutrition, overcrowded living environments, and limited access to healthcare. Among these risk factors, HIV is the leading contributor to TB infections.<br><br>
 
-  Analyzing the global distribution of tuberculosis and human immunodeficiency virus (HIV), as well as the prevalence of TB-HIV co-infection, offers critical insights into the challenges encountered in combating TB. By exploring this relationship, we can gain a deeper understanding of the complexities involved and formulate more effective strategies to tackle both diseases.
+  Analyzing the global distribution of tuberculosis, human immunodeficiency virus (HIV) and TB-HIV coinfection, offers critical insights into the challenges encountered in combating these diseases. By exploring prevalence, incidence and mortality measures, we can gain a deeper understanding of potential complexities and inform more effective global health strategies.
   </font>
 </div>
 <br>
