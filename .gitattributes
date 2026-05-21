@@ -1,2 +1,17 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# 1. This is an R project
+
+*.qmd linguist-language=R
+
+
+# 2. Ignore autogen stuff
+
+index_files/** linguist-vendored
+
+
+# 3. I promise this is R
+
+*.html linguist-vendored 
+
